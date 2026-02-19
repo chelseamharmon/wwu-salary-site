@@ -20,22 +20,23 @@ https://chelseamharmon.github.io/wwu-salary-site/
 
 ## Project Structure
 
+## Project Structure
+
+```text
 wwu-salary-site/
 ├── public/
-│ └── data/
-│ └── faculty.json # data consumed by React frontend
-│
+│   └── data/
+│       └── faculty.json          # data consumed by React frontend
 ├── src/
-│ └── App.jsx # main interactive UI
-│
+│   └── App.jsx                   # main interactive UI
 ├── scripts/
-│ ├── download_wa_salary.sh # helper for downloading WA salary data
-│ ├── build_from_wa_salary.py # ingest + transform pipeline
-│ └── build_faculty_dataset.py # WWU scraper (dept + specialty)
-│
+│   ├── download_wa_salary.sh     # helper for downloading WA salary 
+data
+│   ├── build_from_wa_salary.py   # ingest + transform pipeline
+│   └── build_faculty_dataset.py  # WWU scraper (dept + specialty)
 ├── package.json
 └── README.md
-
+```
 ## Data Sources
 
 ### 1. Washington State Employee Salary Data (Official)
