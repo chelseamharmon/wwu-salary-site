@@ -1,16 +1,64 @@
-# React + Vite
+# WWU Salary + Faculty Specialty Explorer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interactive website that combines **public Washington State employee 
+salary data** with **WWU faculty profile information** (department + 
+specialty areas).
 
-Currently, two official plugins are available:
+The site provides:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Searchable faculty table
+- Salary filtering
+- Year filtering
+- Salary distribution histogram
+- Average salary by department chart
 
-## React Compiler
+## Live Website
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+GitHub Pages deployment:
 
-## Expanding the ESLint configuration
+https://chelseamharmon.github.io/wwu-salary-site/
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Project Structure
+
+wwu-salary-site/
+├── public/
+│ └── data/
+│ └── faculty.json # data consumed by React frontend
+│
+├── src/
+│ └── App.jsx # main interactive UI
+│
+├── scripts/
+│ ├── download_wa_salary.sh # helper for downloading WA salary data
+│ ├── build_from_wa_salary.py # ingest + transform pipeline
+│ └── build_faculty_dataset.py # WWU scraper (dept + specialty)
+│
+├── package.json
+└── README.md
+
+## Data Sources
+
+### 1. Washington State Employee Salary Data (Official)
+
+Source: WA Office of Financial Management / LEAP
+
+- Official statewide salary dataset
+- Used as salary source-of-truth
+- Downloaded via emailed link from LEAP
+
+### 2. WWU Faculty Pages
+
+Used to enrich salary records with:
+
+- department
+- specialty / research interests
+- profile URLs
+
+## Local Development
+
+Start the website locally:
+
+```bash
+npm install
+npm run dev
+
