@@ -77,6 +77,8 @@ export default function App() {
 
   const [sortKey, setSortKey] = useState("salary");
   const [sortDir, setSortDir] = useState("desc");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
 
   useEffect(() => {
     let cancelled = false;
@@ -84,7 +86,8 @@ export default function App() {
     async function load() {
       try {
         setLoadError(null);
-        const res = await fetch("/data/faculty.json");
+	const base = import.meta.env.BASE_URL || "/";
+	const res = await fetch(`${base}data/faculty.json`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!cancelled) setRows(Array.isArray(data) ? data : []);
@@ -125,6 +128,13 @@ export default function App() {
     });
     return copy;
   }, [filtered, sortKey, sortDir]);
+
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(sorted.length / pageSize)), [sorted.length, pageSize]);
+  const pageSafe = useMemo(() => Math.min(Math.max(1, page), totalPages), [page, totalPages]);
+  const paged = useMemo(() => {
+    const start = (pageSafe - 1) * pageSize;
+    return sorted.slice(start, start + pageSize);
+  }, [sorted, pageSafe, pageSize]);
 
   const hist = useMemo(() => buildHistogram(filtered, 10000), [filtered]);
   const deptAvg = useMemo(() => avgSalaryByDept(filtered).slice(0, 12), [filtered]);
@@ -192,6 +202,33 @@ export default function App() {
         <div style={{ marginLeft: "auto", color: "#555" }}>
           Showing <b>{sorted.length}</b> of <b>{rows.length}</b>
         </div>
+
+<div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: "auto" }}>
+  <label style={{ color: "#555" }}>Rows/page</label>
+  <select
+    value={pageSize}
+    onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+    style={{ padding: 8 }}
+  >
+    <option value={50}>50</option>
+    <option value={100}>100</option>
+    <option value={200}>200</option>
+    <option value={500}>500</option>
+  </select>
+
+  <button onClick={() => setPage(1)} disabled={pageSafe === 1}>{"<<"}</button>
+  <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={pageSafe === 
+1}>{"<"}</button>
+  <div style={{ color: "#555" }}>
+    Page <b>{pageSafe}</b> / <b>{totalPages}</b>
+  </div>
+  <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} 
+disabled={pageSafe === totalPages}>{">"}</button>
+  <button onClick={() => setPage(totalPages)} disabled={pageSafe === 
+totalPages}>{">>"}</button>
+</div>
+
+
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 18 }}>
@@ -238,7 +275,7 @@ export default function App() {
           </tr>
         </thead>
         <tbody>
-          {sorted.map((r, i) => (
+          {paged.map((r, i) => (
             <tr key={`${r.name}-${r.year}-${i}`} style={{ borderBottom: "1px solid #f0f0f0" }}>
               <td>
                 {r.profile_url ? (
@@ -254,7 +291,7 @@ export default function App() {
               <td>{formatMoney(r.salary)}</td>
             </tr>
           ))}
-          {sorted.length === 0 && (
+          {paged.length === 0 && (
             <tr>
               <td colSpan={6} style={{ padding: 16, color: "#777" }}>No results.</td>
             </tr>
